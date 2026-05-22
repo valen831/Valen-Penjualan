@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<CardView>(R.id.accountCard).setOnClickListener {
-            // startActivity(Intent(this, DataAkunActivity::class.java))
+            startActivity(Intent(this, AkunActivity::class.java)) // ✅ Fix
         }
 
         findViewById<CardView>(R.id.productCard).setOnClickListener {
