@@ -50,6 +50,12 @@
         <activity
             android:name=".cabang.ModCabangActivity"
             android:exported="false" />
+        <activity
+            android:name=".pegawai.DataPegawaiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".pegawai.ModPegawaiActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
