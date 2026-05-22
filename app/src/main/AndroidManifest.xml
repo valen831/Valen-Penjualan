@@ -44,6 +44,12 @@
         <activity
             android:name=".kategori.DataKategoriActivity"
             android:exported="false" />
+        <activity
+            android:name=".cabang.DataCabangActivity"
+            android:exported="false" />
+        <activity
+            android:name=".cabang.ModCabangActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

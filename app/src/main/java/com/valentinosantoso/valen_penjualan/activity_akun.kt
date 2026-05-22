@@ -21,11 +21,8 @@ class AkunActivity : AppCompatActivity() {
         val tvEmail = findViewById<TextView>(R.id.tvEmailAkun)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
 
-        val nama = sharedPref.getString("nama", "-")
-        val email = sharedPref.getString("email", "-")
-
-        tvNama.text = nama.toString()
-        tvEmail.text = email.toString()
+        tvNama.text = sharedPref.getString("nama", "-")
+        tvEmail.text = sharedPref.getString("email", "-")
 
         btnLogout.setOnClickListener {
             AlertDialog.Builder(this)

@@ -10,6 +10,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/ic_account_circle"
+        android:tint="?android:attr/textColorPrimary"
         android:layout_marginBottom="16dp"/>
 
     <TextView
@@ -18,7 +19,7 @@
         android:layout_height="wrap_content"
         android:text="-"
         android:textSize="16sp"
-        android:textColor="#888888"
+        android:textColor="?android:attr/textColorSecondary"
         android:layout_marginBottom="8dp"/>
 
     <TextView
@@ -28,6 +29,7 @@
         android:text="-"
         android:textSize="22sp"
         android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary"
         android:layout_marginBottom="32dp"/>
 
     <Button

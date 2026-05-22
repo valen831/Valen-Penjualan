@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import com.valentinosantoso.valen_penjualan.kategori.DataKategoriActivity
 import com.valentinosantoso.valen_penjualan.produk.DataProdukActivity
+import com.valentinosantoso.valen_penjualan.cabang.DataCabangActivity
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -85,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<CardView>(R.id.branchCard).setOnClickListener {
-            // startActivity(Intent(this, DataCabangActivity::class.java))
+            startActivity(Intent(this, DataCabangActivity::class.java))
         }
 
         findViewById<CardView>(R.id.printerCard).setOnClickListener {
