@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Icon Colors -->
+    <color name="cyan">#FF00D9FF</color>
+    <color name="purple">#FF9C27B0</color>
+    <color name="orange">#FFFF9800</color>
+    <color name="orange_light">#FFFFB74D</color>
+    <color name="yellow">#FFFFD54F</color>
+    <color name="blue_purple">#FF7E57C2</color>
+    <color name="blue">#FF42A5F5</color>
+
+    <!-- Light Theme -->
+    <color name="background_light">#FFF5F5F5</color>
+    <color name="card_background_light">#FFFFFFFF</color>
+    <color name="text_primary_light">#FF000000</color>
+    <color name="text_secondary_light">#FF424242</color>
+
+    <!-- Dark Theme -->
+    <color name="background_dark">#FF000000</color>
+    <color name="card_background_dark">#FF1A1A1A</color>
+    <color name="text_primary_dark">#FFFFFFFF</color>
+    <color name="text_secondary_dark">#FFFFFFFF</color>
+</resources>

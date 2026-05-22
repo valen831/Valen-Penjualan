@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "165823697063",
+    "project_id": "aplikasipertama-2cbc4b5e",
+    "storage_bucket": "aplikasipertama-2cbc4b5e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165823697063:android:2c4cc84fc1ebbce98e4b82",
+        "android_client_info": {
+          "package_name": "com.valentinosantoso.valen_penjualan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAH7BsELX7UgEvwwjMcoMqJbUKbbf_0k7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

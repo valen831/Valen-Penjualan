@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Base.Theme.Valen_penjualan" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/purple</item>
+        <item name="android:statusBarColor">@color/purple</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="backgroundColor">@color/background_dark</item>
+        <item name="cardBackgroundColor">@color/card_background_dark</item>
+        <item name="customTextColorPrimary">@color/text_primary_dark</item>
+        <item name="customTextColorSecondary">@color/text_secondary_dark</item>
+        <item name="android:textColor">@color/text_primary_dark</item>
+        <item name="android:textColorHint">@color/text_secondary_dark</item>
+        <item name="android:textColorPrimary">@color/text_primary_dark</item>
+        <item name="android:textColorSecondary">@color/text_secondary_dark</item>
+        <item name="toolbarBackground">#FF1E1E1E</item>
+    </style>
+</resources>

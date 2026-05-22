@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="backgroundColor" format="color" />
+    <attr name="cardBackgroundColor" format="color" />
+    <attr name="customTextColorPrimary" format="color" />
+    <attr name="customTextColorSecondary" format="color"/>
+    <attr name="toolbarBackground" format="color"/>
+</resources>
+
