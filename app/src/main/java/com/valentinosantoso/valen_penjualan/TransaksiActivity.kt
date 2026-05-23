@@ -6,16 +6,27 @@ import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.valentinosantoso.valen_penjualan.produk.ModelProduk
 
-class TransaksiActivity : AppCompatActivity() {
+class TransaksiActivity : AppCompatActivity(), AdapterTransaksiProduk.OnQuantityChangeListener {
 
     private lateinit var spinnerCabang: Spinner
     private val cabangList = ArrayList<String>()
     private lateinit var adapter: ArrayAdapter<String>
+
+    private lateinit var rvProduk: RecyclerView
+    private lateinit var produkAdapter: AdapterTransaksiProduk
+    private val allProdukList = ArrayList<ModelProduk>()
+    private val filteredProdukList = ArrayList<ModelProduk>()
+
+    private lateinit var tvTotalItem: TextView
+    private lateinit var tvTotalPrice: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +66,23 @@ class TransaksiActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCabang.adapter = adapter
         
+        spinnerCabang.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                filterProdukByCabang()
+            }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
+
+        tvTotalItem = findViewById(R.id.tvTotalItem)
+        tvTotalPrice = findViewById(R.id.tvTotalPrice)
+
+        rvProduk = findViewById(R.id.recyclerViewTransaksi)
+        rvProduk.layoutManager = LinearLayoutManager(this)
+        produkAdapter = AdapterTransaksiProduk(filteredProdukList, this)
+        rvProduk.adapter = produkAdapter
+        
         loadCabangData()
+        loadProdukData()
     }
 
     private fun loadCabangData() {
@@ -84,5 +111,60 @@ class TransaksiActivity : AppCompatActivity() {
                 // Tangani error jika perlu
             }
         })
+    }
+
+    private fun loadProdukData() {
+        val database = FirebaseDatabase.getInstance("https://aplikasipertama-2cbc4b5e-default-rtdb.asia-southeast1.firebasedatabase.app")
+        val ref = database.getReference("produk")
+        
+        ref.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                allProdukList.clear()
+                if (snapshot.exists()) {
+                    for (data in snapshot.children) {
+                        val status = data.child("statusAktif").getValue(Boolean::class.java) ?: false
+                        if (status) {
+                            val id = data.child("idProduk").getValue(String::class.java) ?: ""
+                            val nama = data.child("namaProduk").getValue(String::class.java) ?: ""
+                            val harga = data.child("harga").getValue(Double::class.java) ?: 0.0
+                            val kategori = data.child("kategori").getValue(String::class.java) ?: ""
+                            val cabang = data.child("cabang").getValue(String::class.java) ?: ""
+                            val stok = data.child("stok").getValue(Int::class.java) ?: 0
+                            val stokTakTerbatas = data.child("stokTakTerbatas").getValue(Boolean::class.java) ?: false
+                            val fotoUrl = data.child("fotoUrl").getValue(String::class.java) ?: ""
+                            
+                            val produk = ModelProduk(id, nama, harga, kategori, cabang, stok, stokTakTerbatas, status, fotoUrl)
+                            allProdukList.add(produk)
+                        }
+                    }
+                }
+                filterProdukByCabang()
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun filterProdukByCabang() {
+        val selectedCabang = spinnerCabang.selectedItem as? String ?: return
+        filteredProdukList.clear()
+        
+        if (selectedCabang == "Tidak ada cabang aktif") {
+            produkAdapter.updateData(filteredProdukList)
+            return
+        }
+
+        for (produk in allProdukList) {
+            val cabangList = produk.cabang.split(",").map { it.trim() }
+            if (cabangList.contains(selectedCabang)) {
+                filteredProdukList.add(produk)
+            }
+        }
+        produkAdapter.updateData(filteredProdukList)
+    }
+
+    override fun onQuantityChanged(totalPrice: Double, totalItems: Int) {
+        tvTotalItem.text = "$totalItems Item"
+        tvTotalPrice.text = "Rp${String.format("%,.0f", totalPrice)}"
     }
 }
