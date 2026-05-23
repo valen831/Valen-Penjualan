@@ -45,7 +45,8 @@ class AdapterProduk(private var list: List<ModelProduk>) :
             holder.tvStok.text = "Tidak Terbatas"
             holder.tvStok.setTextColor(Color.parseColor("#4CAF50"))
         } else {
-            holder.tvStok.text = "Stok: ${item.stok}"
+            val stokFormatted = String.format("%,d", item.stok).replace(',', '.')
+            holder.tvStok.text = "Stok: $stokFormatted"
             holder.tvStok.setTextColor(
                 if (item.stok > 0) Color.parseColor("#FF9800")
                 else Color.parseColor("#F44336")
