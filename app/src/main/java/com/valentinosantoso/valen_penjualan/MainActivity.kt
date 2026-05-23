@@ -11,6 +11,10 @@ import com.valentinosantoso.valen_penjualan.kategori.DataKategoriActivity
 import com.valentinosantoso.valen_penjualan.produk.DataProdukActivity
 import com.valentinosantoso.valen_penjualan.cabang.DataCabangActivity
 import com.valentinosantoso.valen_penjualan.pegawai.DataPegawaiActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -58,10 +62,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupEstimate() {
-        val estimate = 671000
-        val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
-        formatter.currency = Currency.getInstance("IDR")
-        estimateText.text = formatter.format(estimate).replace("IDR", "Rp")
+        estimateText.text = "Rp 0"
+        
+        val db = FirebaseDatabase.getInstance("https://aplikasipertama-2cbc4b5e-default-rtdb.asia-southeast1.firebasedatabase.app")
+        val ref = db.getReference("transaksi")
+        val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale("id", "ID")).format(Date())
+
+        ref.orderByChild("tanggal").equalTo(todayStr)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var total = 0.0
+                    if (snapshot.exists()) {
+                        for (data in snapshot.children) {
+                            total += data.child("totalHarga").getValue(Double::class.java) ?: 0.0
+                        }
+                    }
+                    val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
+                    formatter.currency = Currency.getInstance("IDR")
+                    estimateText.text = formatter.format(total).replace("IDR", "Rp")
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     private fun setupNavigation() {
