@@ -5,14 +5,19 @@ import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.valentinosantoso.valen_penjualan.produk.ModelProduk
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TransaksiActivity : AppCompatActivity(), AdapterTransaksiProduk.OnQuantityChangeListener {
 
@@ -83,6 +88,11 @@ class TransaksiActivity : AppCompatActivity(), AdapterTransaksiProduk.OnQuantity
         
         loadCabangData()
         loadProdukData()
+
+        val btnCheckout = findViewById<MaterialButton>(R.id.btnCheckout)
+        btnCheckout.setOnClickListener {
+            prosesCheckout()
+        }
     }
 
     private fun loadCabangData() {
@@ -129,7 +139,9 @@ class TransaksiActivity : AppCompatActivity(), AdapterTransaksiProduk.OnQuantity
                             val harga = data.child("harga").getValue(Double::class.java) ?: 0.0
                             val kategori = data.child("kategori").getValue(String::class.java) ?: ""
                             val cabang = data.child("cabang").getValue(String::class.java) ?: ""
-                            val stok = data.child("stok").getValue(Int::class.java) ?: 0
+                            // Firebase stores Int as Long — read as Long then convert
+                            val stokLong = data.child("stok").getValue(Long::class.java) ?: 0L
+                            val stok = stokLong.toInt()
                             val stokTakTerbatas = data.child("stokTakTerbatas").getValue(Boolean::class.java) ?: false
                             val fotoUrl = data.child("fotoUrl").getValue(String::class.java) ?: ""
                             
@@ -166,5 +178,107 @@ class TransaksiActivity : AppCompatActivity(), AdapterTransaksiProduk.OnQuantity
     override fun onQuantityChanged(totalPrice: Double, totalItems: Int) {
         tvTotalItem.text = "$totalItems Item"
         tvTotalPrice.text = "Rp${String.format("%,.0f", totalPrice)}"
+    }
+
+    private fun prosesCheckout() {
+        val orderItems = produkAdapter.getOrderItems()
+        if (orderItems.isEmpty()) {
+            Toast.makeText(this, "Belum ada item yang dipilih", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val selectedCabang = spinnerCabang.selectedItem as? String ?: "Tidak diketahui"
+        var totalHarga = 0.0
+        var totalItem = 0
+        val itemDetails = StringBuilder()
+        for ((produk, qty) in orderItems) {
+            totalHarga += produk.harga * qty
+            totalItem += qty
+            itemDetails.append("• ${produk.namaProduk} x$qty = Rp${String.format("%,.0f", produk.harga * qty)}\n")
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Konfirmasi Checkout")
+            .setMessage("Cabang: $selectedCabang\n\n$itemDetails\nTotal: Rp${String.format("%,.0f", totalHarga)}")
+            .setPositiveButton("Checkout") { _, _ ->
+                simpanTransaksi(selectedCabang, orderItems, totalHarga, totalItem)
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    private fun simpanTransaksi(
+        cabang: String,
+        orderItems: List<Pair<ModelProduk, Int>>,
+        totalHarga: Double,
+        totalItem: Int
+    ) {
+        val db = FirebaseDatabase.getInstance("https://aplikasipertama-2cbc4b5e-default-rtdb.asia-southeast1.firebasedatabase.app")
+        val ref = db.getReference("transaksi").push()
+        val idTransaksi = ref.key ?: return
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale("id", "ID"))
+        val timeFormat = SimpleDateFormat("HH:mm:ss", Locale("id", "ID"))
+        val now = Date()
+
+        val items = mutableListOf<Map<String, Any>>()
+        for ((produk, qty) in orderItems) {
+            items.add(
+                mapOf(
+                    "idProduk" to produk.idProduk,
+                    "namaProduk" to produk.namaProduk,
+                    "harga" to produk.harga,
+                    "jumlah" to qty,
+                    "subtotal" to (produk.harga * qty)
+                )
+            )
+        }
+
+        val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
+        val kasir = sharedPref.getString("nama", "Unknown") ?: "Unknown"
+
+        val data = mapOf(
+            "idTransaksi" to idTransaksi,
+            "cabang" to cabang,
+            "tanggal" to dateFormat.format(now),
+            "waktu" to timeFormat.format(now),
+            "timestamp" to System.currentTimeMillis(),
+            "kasir" to kasir,
+            "totalItem" to totalItem,
+            "totalHarga" to totalHarga,
+            "items" to items
+        )
+
+        ref.setValue(data)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Checkout berhasil!", Toast.LENGTH_SHORT).show()
+                // Kurangi stok setiap produk
+                kurangiStok(db, orderItems)
+                produkAdapter.clearQuantities()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Gagal menyimpan transaksi", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun kurangiStok(
+        db: com.google.firebase.database.FirebaseDatabase,
+        orderItems: List<Pair<ModelProduk, Int>>
+    ) {
+        val produkRef = db.getReference("produk")
+        for ((produk, qty) in orderItems) {
+            if (produk.stokTakTerbatas) continue
+            if (produk.idProduk.isEmpty()) continue
+
+            produkRef.child(produk.idProduk).child("stok")
+                .addListenerForSingleValueEvent(object : com.google.firebase.database.ValueEventListener {
+                    override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
+                        val stokSekarang = (snapshot.getValue(Long::class.java) ?: 0L).toInt()
+                        val stokBaru = maxOf(0, stokSekarang - qty)
+                        produkRef.child(produk.idProduk).child("stok").setValue(stokBaru)
+                    }
+                    override fun onCancelled(error: com.google.firebase.database.DatabaseError) {}
+                })
+        }
     }
 }
