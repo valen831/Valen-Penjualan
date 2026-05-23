@@ -99,14 +99,14 @@
                         android:layout_weight="1"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:padding="6dp"
+                        android:padding="8dp"
                         android:background="?attr/selectableItemBackground"
                         android:clickable="true"
                         android:focusable="true">
 
                         <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:src="@drawable/cart"
                             app:tint="@color/cyan"/>
 
@@ -114,9 +114,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Transaksi"
-                            android:textSize="12sp"
+                            android:textSize="14sp"
                             android:textColor="?attr/customTextColorPrimary"
-                            android:layout_marginStart="4dp"/>
+                            android:layout_marginStart="8dp"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -126,14 +126,14 @@
                         android:layout_weight="1"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:padding="6dp"
+                        android:padding="8dp"
                         android:background="?attr/selectableItemBackground"
                         android:clickable="true"
                         android:focusable="true">
 
                         <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:src="@drawable/report"
                             app:tint="@color/purple"/>
 
@@ -141,9 +141,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Laporan"
-                            android:textSize="12sp"
+                            android:textSize="14sp"
                             android:textColor="?attr/customTextColorPrimary"
-                            android:layout_marginStart="4dp"/>
+                            android:layout_marginStart="8dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
