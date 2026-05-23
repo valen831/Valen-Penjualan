@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<CardView>(R.id.printerCard).setOnClickListener {
-            // startActivity(Intent(this, DataPrinterActivity::class.java))
+            startActivity(Intent(this, DataPrinterActivity::class.java))
         }
     }
 

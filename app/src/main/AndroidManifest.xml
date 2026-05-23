@@ -36,6 +36,9 @@
             android:name=".LaporanActivity"
             android:exported="false" />
         <activity
+            android:name=".DataPrinterActivity"
+            android:exported="false" />
+        <activity
             android:name=".produk.DataProdukActivity"
             android:exported="false" />
         <activity
