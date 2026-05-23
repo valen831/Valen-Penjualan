@@ -42,6 +42,11 @@ class TambahProdukActivity : AppCompatActivity() {
     private val kategoriList = mutableListOf<String>()
     private val cabangList = mutableListOf<String>()
 
+    private var isEditMode = false
+    private var existingIdProduk = ""
+    private var existingFotoUrl = ""
+    private var existingStatusAktif = true
+
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -69,6 +74,7 @@ class TambahProdukActivity : AppCompatActivity() {
         loadKategori()
         loadCabang()
         setupListeners()
+        checkIntentData()
     }
 
     private fun initViews() {
@@ -83,6 +89,40 @@ class TambahProdukActivity : AppCompatActivity() {
         etStok = findViewById(R.id.etStok)
         cbStokTakTerbatas = findViewById(R.id.cbStokTakTerbatas)
         btnSimpan = findViewById(R.id.btnSimpan)
+    }
+
+    private fun checkIntentData() {
+        isEditMode = intent.getBooleanExtra("EXTRA_IS_EDIT", false)
+        if (isEditMode) {
+            existingIdProduk = intent.getStringExtra("EXTRA_ID_PRODUK") ?: ""
+            etNamaProduk.setText(intent.getStringExtra("EXTRA_NAMA_PRODUK") ?: "")
+            val harga = intent.getDoubleExtra("EXTRA_HARGA", 0.0)
+            etHarga.setText(if (harga == Math.floor(harga)) harga.toLong().toString() else harga.toString())
+            
+            selectedKategori = intent.getStringExtra("EXTRA_KATEGORI") ?: ""
+            if (selectedKategori.isNotEmpty()) btnPilihKategori.text = selectedKategori
+            
+            selectedCabang = intent.getStringExtra("EXTRA_CABANG") ?: ""
+            if (selectedCabang.isNotEmpty()) btnPilihCabang.text = selectedCabang
+            
+            val stokTakTerbatas = intent.getBooleanExtra("EXTRA_STOK_TAK_TERBATAS", false)
+            cbStokTakTerbatas.isChecked = stokTakTerbatas
+            if (!stokTakTerbatas) {
+                etStok.setText(intent.getIntExtra("EXTRA_STOK", 0).toString())
+            }
+            
+            existingFotoUrl = intent.getStringExtra("EXTRA_FOTO_URL") ?: ""
+            if (existingFotoUrl.isNotEmpty()) {
+                com.bumptech.glide.Glide.with(this).load(existingFotoUrl).into(imgProduk)
+                imgProduk.setPadding(0, 0, 0, 0)
+            }
+            
+            existingStatusAktif = intent.getBooleanExtra("EXTRA_STATUS_AKTIF", true)
+            
+            btnSimpan.text = "Simpan Perubahan"
+            findViewById<TextView>(R.id.tvTitleBar)?.text = "Edit Produk"
+            findViewById<TextView>(R.id.tvTitleContent)?.text = "Edit Produk"
+        }
     }
 
     private fun loadKategori() {
@@ -197,16 +237,20 @@ class TambahProdukActivity : AppCompatActivity() {
         nama: String, harga: Double, kategori: String,
         cabang: String, stok: Int, stokTakTerbatas: Boolean, fotoUrl: String
     ) {
-        val ref = db.getReference("produk").push()
+        val ref = if (isEditMode) db.getReference("produk").child(existingIdProduk) else db.getReference("produk").push()
+        val id = if (isEditMode) existingIdProduk else ref.key ?: ""
+        val finalFotoUrl = if (fotoUrl.isEmpty() && isEditMode) existingFotoUrl else fotoUrl
+        
         val data = mapOf(
-            "idProduk" to ref.key,
+            "idProduk" to id,
             "namaProduk" to nama,
             "harga" to harga,
             "kategori" to kategori,
             "cabang" to cabang,
             "stok" to stok,
             "stokTakTerbatas" to stokTakTerbatas,
-            "fotoUrl" to fotoUrl
+            "fotoUrl" to finalFotoUrl,
+            "statusAktif" to existingStatusAktif
         )
         ref.setValue(data)
             .addOnSuccessListener {
