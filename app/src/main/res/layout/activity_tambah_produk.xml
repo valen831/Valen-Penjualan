@@ -112,13 +112,13 @@
                             android:textAlignment="center"
                             android:padding="8dp"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:background="#CCCCCC" />
+                            android:background="?attr/colorSurfaceVariant" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:background="#CCCCCC">
+                            android:background="?attr/colorSurfaceVariant">
 
                             <Button
                                 android:id="@+id/btnKamera"
@@ -127,8 +127,8 @@
                                 android:layout_weight="1"
                                 android:layout_margin="8dp"
                                 android:text="Kamera"
-                                android:backgroundTint="#EEEEEE"
-                                android:textColor="#333333"
+                                android:backgroundTint="?attr/colorSurface"
+                                android:textColor="?attr/colorOnSurface"
                                 app:cornerRadius="20dp" />
 
                             <Button
@@ -138,8 +138,8 @@
                                 android:layout_weight="1"
                                 android:layout_margin="8dp"
                                 android:text="Galeri"
-                                android:backgroundTint="#EEEEEE"
-                                android:textColor="#333333"
+                                android:backgroundTint="?attr/colorSurface"
+                                android:textColor="?attr/colorOnSurface"
                                 app:cornerRadius="20dp" />
 
                         </LinearLayout>
