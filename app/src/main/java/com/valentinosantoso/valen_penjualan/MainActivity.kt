@@ -39,6 +39,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupGreeting() {
+        val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
+        val userName = sharedPref.getString("nama", "User") ?: "User"
+
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val greeting = when {
             hour < 11 -> "Selamat Pagi"
@@ -46,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             hour < 18 -> "Selamat Sore"
             else -> "Selamat Malam"
         }
-        greetingText.text = "$greeting, Valen"
+        greetingText.text = "$greeting, $userName"
     }
 
     private fun setupDate() {
