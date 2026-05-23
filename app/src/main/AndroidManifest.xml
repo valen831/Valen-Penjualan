@@ -62,6 +62,9 @@
         <activity
             android:name=".pegawai.ModPegawaiActivity"
             android:exported="false" />
+        <activity
+            android:name=".TransaksiActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
