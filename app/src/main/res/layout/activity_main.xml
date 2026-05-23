@@ -153,7 +153,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/accountCard"
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="110dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
                     app:cardCornerRadius="16dp"
@@ -168,11 +168,11 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:src="@drawable/profile"
                             app:tint="@color/orange"/>
 
@@ -180,7 +180,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Akun"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textColor="?attr/customTextColorPrimary"
                             android:layout_marginTop="8dp"/>
                     </LinearLayout>
@@ -189,7 +189,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/productCard"
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="110dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
                     app:cardCornerRadius="16dp"
@@ -204,11 +204,11 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:src="@drawable/product"
                             app:tint="@color/yellow"/>
 
@@ -216,7 +216,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Produk"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textColor="?attr/customTextColorPrimary"
                             android:layout_marginTop="8dp"/>
                     </LinearLayout>
@@ -225,7 +225,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/categoryCard"
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="110dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
                     app:cardCornerRadius="16dp"
@@ -240,11 +240,11 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:src="@drawable/price_tag"
                             app:tint="@color/orange_light"/>
 
@@ -252,7 +252,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Kategori"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textColor="?attr/customTextColorPrimary"
                             android:layout_marginTop="8dp"/>
                     </LinearLayout>
@@ -268,7 +268,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/employeeCard"
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="110dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
                     app:cardCornerRadius="16dp"
@@ -283,11 +283,11 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:src="@drawable/employee"
                             app:tint="@color/blue_purple"/>
 
@@ -295,7 +295,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Pegawai"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textColor="?attr/customTextColorPrimary"
                             android:layout_marginTop="8dp"/>
                     </LinearLayout>
@@ -304,7 +304,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/branchCard"
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="110dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
                     app:cardCornerRadius="16dp"
@@ -319,11 +319,11 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:src="@drawable/store"
                             app:tint="@color/orange"/>
 
@@ -331,7 +331,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Cabang"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textColor="?attr/customTextColorPrimary"
                             android:layout_marginTop="8dp"/>
                     </LinearLayout>
@@ -340,7 +340,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/printerCard"
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="110dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
                     app:cardCornerRadius="16dp"
@@ -355,11 +355,11 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
                             android:src="@drawable/printer"
                             app:tint="@color/blue"/>
 
@@ -367,7 +367,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Printer"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textColor="?attr/customTextColorPrimary"
                             android:layout_marginTop="8dp"/>
                     </LinearLayout>
