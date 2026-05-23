@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<LinearLayout>(R.id.reportLayout).setOnClickListener {
-            // startActivity(Intent(this, LaporanActivity::class.java))
+            startActivity(Intent(this, LaporanActivity::class.java))
         }
 
         findViewById<CardView>(R.id.accountCard).setOnClickListener {
