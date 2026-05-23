@@ -1,44 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="?attr/backgroundColor"
+    android:fillViewport="true"
     tools:context=".DataPrinterActivity">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="24dp"
-        android:text="Pengaturan Printer"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="?attr/customTextColorPrimary" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Halaman Printer"
-            android:textSize="20sp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="56dp"
+            android:paddingBottom="24dp"
+            android:text="Pengaturan Printer"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="?attr/customTextColorPrimary"/>
-            
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pengaturan untuk menghubungkan printer Bluetooth/Thermal akan hadir di sini."
-            android:textSize="16sp"
-            android:layout_marginTop="8dp"
-            android:textAlignment="center"
-            android:textColor="?attr/customTextColorSecondary"/>
-    </LinearLayout>
+            android:textColor="?attr/customTextColorPrimary" />
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Halaman Printer"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="?attr/customTextColorPrimary"/>
+                
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pengaturan untuk menghubungkan printer Bluetooth/Thermal akan hadir di sini."
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                android:textColor="?attr/customTextColorSecondary"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
