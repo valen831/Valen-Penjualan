@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigation() {
         findViewById<LinearLayout>(R.id.transactionLayout).setOnClickListener {
-            // startActivity(Intent(this, TransaksiActivity::class.java))
+            startActivity(Intent(this, TransaksiActivity::class.java))
         }
 
         findViewById<LinearLayout>(R.id.reportLayout).setOnClickListener {
