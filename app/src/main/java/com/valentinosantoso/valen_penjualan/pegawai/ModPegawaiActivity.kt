@@ -27,10 +27,12 @@ class ModPegawaiActivity : AppCompatActivity() {
     private lateinit var etTeleponPegawai: EditText
     private lateinit var etEmailPegawai: EditText
     private lateinit var spinnerStatus: Spinner
+    private lateinit var spinnerGender: Spinner
     private lateinit var btnSimpan: Button
     private lateinit var btnHapus: Button
 
     private var selectedStatus = ""
+    private var selectedGender = ""
     private var isEditMode = false
     private var existingIdPegawai = ""
     private var existingNamaPegawai = ""
@@ -54,6 +56,7 @@ class ModPegawaiActivity : AppCompatActivity() {
         etTeleponPegawai = findViewById(R.id.etTeleponPegawai)
         etEmailPegawai = findViewById(R.id.etEmailPegawai)
         spinnerStatus = findViewById(R.id.spinnerStatus)
+        spinnerGender = findViewById(R.id.spinnerGender)
         btnSimpan = findViewById(R.id.btnSimpan)
         btnHapus = findViewById(R.id.btnHapus)
     }
@@ -97,6 +100,43 @@ class ModPegawaiActivity : AppCompatActivity() {
             }
             override fun onNothingSelected(parent: AdapterView<*>?) { selectedStatus = "" }
         }
+
+        val genderOptions = arrayOf("Pilih Jenis Kelamin", "Laki-laki", "Perempuan")
+        val genderAdapter = object : ArrayAdapter<String>(
+            this, android.R.layout.simple_spinner_item, genderOptions
+        ) {
+            override fun isEnabled(position: Int): Boolean = position != 0
+
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                val tv = view as TextView
+                val typedValue = android.util.TypedValue()
+                theme.resolveAttribute(R.attr.customTextColorPrimary, typedValue, true)
+                tv.setTextColor(typedValue.data)
+                return view
+            }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                val tv = view as TextView
+                val typedValue = android.util.TypedValue()
+                theme.resolveAttribute(R.attr.customTextColorPrimary, typedValue, true)
+                tv.setTextColor(if (position == 0) Color.GRAY else typedValue.data)
+                tv.setBackgroundColor(
+                    if (isDarkMode()) Color.parseColor("#1E1E1E") else Color.WHITE
+                )
+                return view
+            }
+        }
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerGender.adapter = genderAdapter
+
+        spinnerGender.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedGender = if (position == 0) "" else genderOptions[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { selectedGender = "" }
+        }
     }
 
     private fun isDarkMode(): Boolean {
@@ -119,6 +159,11 @@ class ModPegawaiActivity : AppCompatActivity() {
             etTeleponPegawai.setText(intent.getStringExtra("EXTRA_TELEPON_PEGAWAI") ?: "")
             etEmailPegawai.setText(intent.getStringExtra("EXTRA_EMAIL_PEGAWAI") ?: "")
             spinnerStatus.setSelection(if (intent.getBooleanExtra("EXTRA_STATUS_AKTIF", false)) 1 else 2)
+            
+            val gender = intent.getStringExtra("EXTRA_JENIS_KELAMIN") ?: ""
+            if (gender == "Laki-laki") spinnerGender.setSelection(1)
+            else if (gender == "Perempuan") spinnerGender.setSelection(2)
+
             btnSimpan.text = "Simpan Perubahan"
             btnHapus.visibility = View.VISIBLE
         } else {
@@ -157,6 +202,9 @@ class ModPegawaiActivity : AppCompatActivity() {
             }
             selectedStatus.isEmpty() -> {
                 Toast.makeText(this, "Pilih status keaktifan pegawai", Toast.LENGTH_SHORT).show()
+            }
+            selectedGender.isEmpty() -> {
+                Toast.makeText(this, "Pilih jenis kelamin pegawai", Toast.LENGTH_SHORT).show()
             }
             else -> {
                 btnSimpan.isEnabled = false
@@ -198,6 +246,7 @@ class ModPegawaiActivity : AppCompatActivity() {
                         "jabatan" to jabatan,
                         "teleponPegawai" to telepon,
                         "emailPegawai" to email,
+                        "jenisKelamin" to selectedGender,
                         "statusAktif" to (selectedStatus == "Aktif")
                     )
 
