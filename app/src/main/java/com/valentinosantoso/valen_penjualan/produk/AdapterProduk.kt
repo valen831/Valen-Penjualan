@@ -74,6 +74,22 @@ class AdapterProduk(private var list: List<ModelProduk>) :
         } else {
             holder.imgProduk.setImageResource(R.drawable.product)
         }
+
+        holder.itemView.setOnClickListener {
+            val intent = android.content.Intent(holder.itemView.context, com.valentinosantoso.valen_penjualan.produk.TambahProdukActivity::class.java).apply {
+                putExtra("EXTRA_IS_EDIT", true)
+                putExtra("EXTRA_ID_PRODUK", item.idProduk)
+                putExtra("EXTRA_NAMA_PRODUK", item.namaProduk)
+                putExtra("EXTRA_HARGA", item.harga)
+                putExtra("EXTRA_KATEGORI", item.kategori)
+                putExtra("EXTRA_CABANG", item.cabang)
+                putExtra("EXTRA_STOK", item.stok)
+                putExtra("EXTRA_STOK_TAK_TERBATAS", item.stokTakTerbatas)
+                putExtra("EXTRA_FOTO_URL", item.fotoUrl)
+                putExtra("EXTRA_STATUS_AKTIF", item.statusAktif)
+            }
+            holder.itemView.context.startActivity(intent)
+        }
     }
 
     override fun getItemCount() = list.size
