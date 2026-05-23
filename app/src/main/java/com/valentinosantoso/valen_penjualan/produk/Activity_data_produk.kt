@@ -77,7 +77,7 @@ class DataProdukActivity : AppCompatActivity() {
                         harga = data.child("harga").getValue(Double::class.java) ?: 0.0,
                         kategori = data.child("kategori").getValue(String::class.java) ?: "",
                         cabang = data.child("cabang").getValue(String::class.java) ?: "",
-                        stok = data.child("stok").getValue(Int::class.java) ?: 0,
+                        stok = (data.child("stok").getValue(Long::class.java) ?: 0L).toInt(),
                         stokTakTerbatas = data.child("stokTakTerbatas").getValue(Boolean::class.java) ?: false,
                         statusAktif = data.child("statusAktif").getValue(Boolean::class.java) ?: true,
                         fotoUrl = data.child("fotoUrl").getValue(String::class.java) ?: ""
