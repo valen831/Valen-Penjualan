@@ -48,7 +48,8 @@ class AdapterTransaksiProduk(
         if (item.stokTakTerbatas) {
             holder.tvStock.text = "Stok: Tidak Terbatas"
         } else {
-            holder.tvStock.text = "Stok: ${item.stok}"
+            val stokFormatted = String.format("%,d", item.stok).replace(',', '.')
+            holder.tvStock.text = "Stok: $stokFormatted"
         }
 
         if (item.fotoUrl.isNotEmpty()) {
@@ -101,5 +102,22 @@ class AdapterTransaksiProduk(
             }
         }
         listener.onQuantityChanged(totalPrice, totalItems)
+    }
+
+    fun getOrderItems(): List<Pair<ModelProduk, Int>> {
+        val items = mutableListOf<Pair<ModelProduk, Int>>()
+        for (item in list) {
+            val qty = quantities[item.idProduk] ?: 0
+            if (qty > 0) {
+                items.add(Pair(item, qty))
+            }
+        }
+        return items
+    }
+
+    fun clearQuantities() {
+        quantities.clear()
+        notifyDataSetChanged()
+        notifyTotalChanged()
     }
 }
