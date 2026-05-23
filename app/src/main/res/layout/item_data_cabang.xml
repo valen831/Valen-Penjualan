@@ -88,8 +88,9 @@
 
             <ImageView
                 android:id="@+id/imgStatusAktif"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="#4CAF50"
                 android:contentDescription="Status Keaktifan" />
 
             <TextView
