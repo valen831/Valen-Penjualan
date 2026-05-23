@@ -25,6 +25,9 @@ class LaporanActivity : AppCompatActivity() {
     private lateinit var rvTransaksi: RecyclerView
 
     private val transaksiList = mutableListOf<Map<String, Any>>()
+    private var selectedCalendar = Calendar.getInstance()
+    private var dbListener: ValueEventListener? = null
+    private val dbRef = FirebaseDatabase.getInstance("https://aplikasipertama-2cbc4b5e-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("transaksi")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,22 +41,37 @@ class LaporanActivity : AppCompatActivity() {
         tvEmpty = findViewById(R.id.tvEmpty)
         rvTransaksi = findViewById(R.id.rvTransaksi)
 
-        val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
-        tvTanggalHariIni.text = dateFormat.format(Date())
+        val btnPrevDay = findViewById<ImageButton>(R.id.btnPrevDay)
+        val btnNextDay = findViewById<ImageButton>(R.id.btnNextDay)
+
+        btnPrevDay.setOnClickListener {
+            selectedCalendar.add(Calendar.DAY_OF_YEAR, -1)
+            updateDateAndLoad()
+        }
+
+        btnNextDay.setOnClickListener {
+            selectedCalendar.add(Calendar.DAY_OF_YEAR, 1)
+            updateDateAndLoad()
+        }
 
         rvTransaksi.layoutManager = LinearLayoutManager(this)
         rvTransaksi.adapter = LaporanAdapter()
 
-        loadTransaksiHariIni()
+        updateDateAndLoad()
     }
 
-    private fun loadTransaksiHariIni() {
-        val db = FirebaseDatabase.getInstance("https://aplikasipertama-2cbc4b5e-default-rtdb.asia-southeast1.firebasedatabase.app")
-        val ref = db.getReference("transaksi")
+    private fun updateDateAndLoad() {
+        val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
+        tvTanggalHariIni.text = dateFormat.format(selectedCalendar.time)
 
-        val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale("id", "ID")).format(Date())
+        val dateStr = SimpleDateFormat("yyyy-MM-dd", Locale("id", "ID")).format(selectedCalendar.time)
+        loadTransaksiForDate(dateStr)
+    }
 
-        ref.orderByChild("tanggal").equalTo(todayStr)
+    private fun loadTransaksiForDate(dateStr: String) {
+        dbListener?.let { dbRef.removeEventListener(it) }
+
+        dbListener = dbRef.orderByChild("tanggal").equalTo(dateStr)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     transaksiList.clear()
@@ -89,12 +107,20 @@ class LaporanActivity : AppCompatActivity() {
                     tvTotalHariIni.text = "Rp${String.format("%,.0f", totalHariIni)}"
                     tvJumlahTransaksi.text = "${transaksiList.size} Transaksi"
 
+                    val dateFormatDisplay = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID")).format(selectedCalendar.time)
+                    tvEmpty.text = "Belum ada transaksi pada $dateFormatDisplay"
                     tvEmpty.visibility = if (transaksiList.isEmpty()) View.VISIBLE else View.GONE
+                    
                     rvTransaksi.adapter?.notifyDataSetChanged()
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
             })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dbListener?.let { dbRef.removeEventListener(it) }
     }
 
     inner class LaporanAdapter : RecyclerView.Adapter<LaporanAdapter.VH>() {
