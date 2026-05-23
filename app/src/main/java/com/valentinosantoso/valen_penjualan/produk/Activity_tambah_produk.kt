@@ -182,12 +182,29 @@ class TambahProdukActivity : AppCompatActivity() {
                 Toast.makeText(this, "Data cabang kosong", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            
+            val checkedItems = BooleanArray(cabangList.size)
+            val selectedList = selectedCabang.split(", ").filter { it.isNotEmpty() }
+            for (i in cabangList.indices) {
+                if (selectedList.contains(cabangList[i])) {
+                    checkedItems[i] = true
+                }
+            }
+
             AlertDialog.Builder(this)
                 .setTitle("Pilih Cabang")
-                .setItems(cabangList.toTypedArray()) { _, which ->
-                    selectedCabang = cabangList[which]
-                    btnPilihCabang.text = selectedCabang
+                .setMultiChoiceItems(cabangList.toTypedArray(), checkedItems) { _, which, isChecked ->
+                    checkedItems[which] = isChecked
                 }
+                .setPositiveButton("Pilih") { _, _ ->
+                    val selected = mutableListOf<String>()
+                    for (i in checkedItems.indices) {
+                        if (checkedItems[i]) selected.add(cabangList[i])
+                    }
+                    selectedCabang = selected.joinToString(", ")
+                    btnPilihCabang.text = if (selectedCabang.isEmpty()) "Pilih Cabang" else selectedCabang
+                }
+                .setNegativeButton("Batal", null)
                 .show()
         }
 
