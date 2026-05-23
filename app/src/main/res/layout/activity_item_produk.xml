@@ -81,6 +81,7 @@
 
             </LinearLayout>
 
+            <!-- Row Stok -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -97,24 +98,34 @@
 
                 <TextView
                     android:id="@+id/tvStok"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Tidak Terbatas"
                     android:textSize="12sp"
                     android:textColor="#4CAF50"
                     android:layout_marginStart="4dp" />
 
+            </LinearLayout>
+
+            <!-- Row Cabang -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="top"
+                android:layout_marginTop="4dp">
+
                 <ImageView
                     android:layout_width="14dp"
                     android:layout_height="14dp"
+                    android:layout_marginTop="2dp"
                     android:src="@drawable/store"
                     android:contentDescription="Cabang"
                     app:tint="?attr/colorOnSurfaceVariant" />
 
                 <TextView
                     android:id="@+id/tvCabang"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Utama"
                     android:textSize="12sp"
