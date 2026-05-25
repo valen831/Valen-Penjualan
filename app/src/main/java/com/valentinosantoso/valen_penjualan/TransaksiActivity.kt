@@ -1,11 +1,13 @@
 package com.valentinosantoso.valen_penjualan
 
+import android.Manifest
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +22,42 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class TransaksiActivity : AppCompatActivity(), AdapterTransaksiProduk.OnQuantityChangeListener {
+
+    private var tempCabang: String? = null
+    private var tempKasir: String? = null
+    private var tempWaktu: String? = null
+    private var tempItemsText: String? = null
+    private var tempTotalHarga: Double = 0.0
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.entries.all { it.value }
+        if (allGranted) {
+            Toast.makeText(this, "Izin Bluetooth aktif.", Toast.LENGTH_SHORT).show()
+            val sharedPrefPrint = getSharedPreferences("PrinterConfig", MODE_PRIVATE)
+            val printerMac = sharedPrefPrint.getString("printer_mac", null)
+            val cabang = tempCabang
+            val kasir = tempKasir
+            val waktu = tempWaktu
+            val itemsText = tempItemsText
+            if (printerMac != null && cabang != null && kasir != null && waktu != null && itemsText != null) {
+                printReceiptNow(printerMac, cabang, kasir, waktu, itemsText, tempTotalHarga)
+            }
+            clearTempPrintData()
+        } else {
+            Toast.makeText(this, "Izin Bluetooth ditolak. Gagal mencetak struk.", Toast.LENGTH_SHORT).show()
+            clearTempPrintData()
+        }
+    }
+
+    private fun clearTempPrintData() {
+        tempCabang = null
+        tempKasir = null
+        tempWaktu = null
+        tempItemsText = null
+        tempTotalHarga = 0.0
+    }
 
     private lateinit var spinnerCabang: Spinner
     private val cabangList = ArrayList<String>()
@@ -254,11 +292,96 @@ class TransaksiActivity : AppCompatActivity(), AdapterTransaksiProduk.OnQuantity
                 Toast.makeText(this, "Checkout berhasil!", Toast.LENGTH_SHORT).show()
                 // Kurangi stok setiap produk
                 kurangiStok(db, orderItems)
+
+                // Format itemsText
+                val itemsBuilder = StringBuilder()
+                for ((produk, qty) in orderItems) {
+                    val subtotal = produk.harga * qty
+                    itemsBuilder.append("\u2022 ${produk.namaProduk} x$qty = Rp${String.format("%,.0f", subtotal)}\n")
+                }
+                val itemsText = itemsBuilder.toString().trimEnd()
+                val waktuStr = timeFormat.format(now)
+
+                tanyaCetakStruk(cabang, kasir, waktuStr, itemsText, totalHarga)
+
                 produkAdapter.clearQuantities()
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Gagal menyimpan transaksi", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun tanyaCetakStruk(
+        cabang: String,
+        kasir: String,
+        waktu: String,
+        itemsText: String,
+        totalHarga: Double
+    ) {
+        val sharedPref = getSharedPreferences("PrinterConfig", MODE_PRIVATE)
+        val printerMac = sharedPref.getString("printer_mac", null)
+
+        if (printerMac == null) {
+            return
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Transaksi Berhasil")
+            .setMessage("Apakah Anda ingin mencetak struk belanja?")
+            .setCancelable(false)
+            .setPositiveButton("Cetak") { _, _ ->
+                if (!BluetoothPrinterHelper.hasBluetoothPermission(this)) {
+                    tempCabang = cabang
+                    tempKasir = kasir
+                    tempWaktu = waktu
+                    tempItemsText = itemsText
+                    tempTotalHarga = totalHarga
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                        requestPermissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.BLUETOOTH_CONNECT,
+                                Manifest.permission.BLUETOOTH_SCAN
+                            )
+                        )
+                    } else {
+                        requestPermissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.BLUETOOTH,
+                                Manifest.permission.BLUETOOTH_ADMIN
+                            )
+                        )
+                    }
+                } else {
+                    printReceiptNow(printerMac, cabang, kasir, waktu, itemsText, totalHarga)
+                }
+            }
+            .setNegativeButton("Tidak", null)
+            .show()
+    }
+
+    private fun printReceiptNow(
+        macAddress: String,
+        cabang: String,
+        kasir: String,
+        waktu: String,
+        itemsText: String,
+        totalHarga: Double
+    ) {
+        Toast.makeText(this, "Sedang mencetak...", Toast.LENGTH_SHORT).show()
+        BluetoothPrinterHelper.printReceipt(
+            context = this,
+            macAddress = macAddress,
+            cabang = cabang,
+            kasir = kasir,
+            waktu = waktu,
+            itemsText = itemsText,
+            totalHarga = totalHarga
+        ) { success, message ->
+            runOnUiThread {
+                Toast.makeText(this, message ?: (if (success) "Sukses mencetak!" else "Gagal mencetak."), Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun kurangiStok(
