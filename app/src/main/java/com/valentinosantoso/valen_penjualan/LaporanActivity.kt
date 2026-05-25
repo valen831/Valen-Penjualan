@@ -1,11 +1,14 @@
 package com.valentinosantoso.valen_penjualan
 
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +20,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class LaporanActivity : AppCompatActivity() {
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.entries.all { it.value }
+        if (allGranted) {
+            Toast.makeText(this, "Izin Bluetooth aktif. Silakan tekan cetak lagi.", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Izin Bluetooth ditolak. Gagal mencetak nota.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private lateinit var tvTotalHariIni: TextView
     private lateinit var tvJumlahTransaksi: TextView
@@ -130,6 +144,7 @@ class LaporanActivity : AppCompatActivity() {
             val tvTotalHarga: TextView = itemView.findViewById(R.id.tvTotalHarga)
             val tvItems: TextView = itemView.findViewById(R.id.tvItems)
             val tvKasir: TextView = itemView.findViewById(R.id.tvKasir)
+            val btnPrintNota: ImageButton = itemView.findViewById(R.id.btnPrintNota)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -145,6 +160,49 @@ class LaporanActivity : AppCompatActivity() {
             holder.tvTotalHarga.text = "Rp${String.format("%,.0f", item["totalHarga"] as Double)}"
             holder.tvItems.text = item["itemsText"] as String
             holder.tvKasir.text = "Kasir: ${item["kasir"]}"
+
+            holder.btnPrintNota.setOnClickListener {
+                val sharedPref = getSharedPreferences("PrinterConfig", MODE_PRIVATE)
+                val printerMac = sharedPref.getString("printer_mac", null)
+                if (printerMac == null) {
+                    Toast.makeText(this@LaporanActivity, "Printer belum dikonfigurasi. Atur printer terlebih dahulu.", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+
+                if (!BluetoothPrinterHelper.hasBluetoothPermission(this@LaporanActivity)) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                        requestPermissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.BLUETOOTH_CONNECT,
+                                Manifest.permission.BLUETOOTH_SCAN
+                            )
+                        )
+                    } else {
+                        requestPermissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.BLUETOOTH,
+                                Manifest.permission.BLUETOOTH_ADMIN
+                            )
+                        )
+                    }
+                    return@setOnClickListener
+                }
+
+                Toast.makeText(this@LaporanActivity, "Sedang mencetak...", Toast.LENGTH_SHORT).show()
+                BluetoothPrinterHelper.printReceipt(
+                    context = this@LaporanActivity,
+                    macAddress = printerMac,
+                    cabang = item["cabang"] as String,
+                    kasir = item["kasir"] as String,
+                    waktu = item["waktu"] as String,
+                    itemsText = item["itemsText"] as String,
+                    totalHarga = item["totalHarga"] as Double
+                ) { success, message ->
+                    runOnUiThread {
+                        Toast.makeText(this@LaporanActivity, message ?: (if (success) "Sukses mencetak!" else "Gagal mencetak."), Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
 
         override fun getItemCount() = transaksiList.size
